@@ -14,6 +14,16 @@ const readClients = async () => {
   }
 };
 
+const readRooms = async () => {
+  try {
+    const data = await readData(join(__dirname, "fakeDB.json"));
+    const parsedData = JSON.parse(data);
+    return parsedData.rooms;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const writeClients = async (clientArray) => {
   try {
     const data = await readData(join(__dirname, "fakeDB.json"));
@@ -29,7 +39,24 @@ const writeClients = async (clientArray) => {
   }
 };
 
+const writeRooms = async (roomArray) => {
+  try {
+    const data = await readData(join(__dirname, "fakeDB.json"));
+    const parsedData = JSON.parse(data);
+    parsedData.rooms = roomArray;
+    const result = await writeData(
+      join(__dirname, "fakeDB.json"),
+      JSON.stringify(parsedData)
+    );
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   readClients,
   writeClients,
+  readRooms,
+  writeRooms,
 };

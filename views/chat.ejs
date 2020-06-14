@@ -14,7 +14,7 @@
   </head>
   <body>
     <div class="container h-100">
-      <div class="row mx-auto text-break">
+      <div class="row mx-auto text-break" id="infoArea">
         <div
           class="alert alert-success col-xs-12 col-sm-6 mx-auto mt-3 mb-5"
           role="alert"
@@ -25,7 +25,7 @@
         </div>
       </div>
       <% if(connected.length > 0){ %>
-      <div class="row mx-auto text-center">
+      <div id="cardDeckHeader" class="row mx-auto text-center">
         <p class="h3 col-sm-6 mx-auto text-monospace font-weight-bolder">
           Online Clients:
         </p>
@@ -50,6 +50,65 @@
           </div>
         </div>
         <% }}) %>
+      </div>
+      <div class="row mt-5 d-flex justify-content-center" id="videoArea">
+        <video id="myVideo" autoplay playsinline muted></video>
+        <video id="remoteVideo" autoplay playsinline muted></video>
+      </div>
+      <div id="messageDialog" class="mx-auto row mt-5" hidden>
+        <div class="col-md-6 col-xs-10 mx-auto">
+          <div class="input-group mb-3">
+            <input
+              id="chatMessage"
+              type="text"
+              class="form-control"
+              placeholder="Type Something..."
+              required
+            />
+            <div class="input-group-append">
+              <button
+                class="btn btn-outline-info"
+                type="button"
+                onclick="sendChat()"
+              >
+                Send
+              </button>
+            </div>
+          </div>
+          <div class="btn-group mb-3 d-flex" role="group">
+            <button
+              type="button"
+              class="btn btn-success"
+              id="btn-start-video"
+              onclick="startVideoCall()"
+              disabled
+            >
+              Start Video Call
+            </button>
+            <button
+              type="button"
+              class="btn btn-warning"
+              id="btn-share-screen"
+              onclick="startScreenShare()"
+              disabled
+            >
+              Share Screen
+            </button>
+            <button
+              type="button"
+              id="btn-end-connection"
+              class="btn btn-danger"
+              onclick="endConnection()"
+              disabled
+            >
+              End Connection
+            </button>
+          </div>
+          <div
+            id="messageConsole"
+            class="card border-info shadow vh-30 px-2 py-2 overflow-auto text-break"
+          ></div>
+        </div>
       </div>
     </div>
     <script type="text/javascript">

@@ -157,11 +157,19 @@ const addDataChannel = (ev) => {
     dataChannel.onopen = () => {
       dataChannel.send("Connection Established!");
       console.log("Data Channel Opened!");
+      document.querySelector("#btn-start-video").toggleAttribute("disabled");
+      document.querySelector("#btn-share-screen").toggleAttribute("disabled");
+      document.querySelector("#btn-end-connection").toggleAttribute("disabled");
     };
   } catch (error) {
     console.error(error);
     alert("Error Occurred.");
   }
+};
+
+const addMediaTrack = (ev) => {
+  console.log("Remote Video Feed Available!");
+  document.querySelector("#remoteVideo").srcObject = ev.streams[0];
 };
 
 const createOffer = async () => {
@@ -188,12 +196,15 @@ const createOffer = async () => {
     dataChannel.onopen = () => {
       console.log("Data Channel Opened!");
       dataChannel.send("Connection Established!");
+      document.querySelector("#btn-start-video").toggleAttribute("disabled");
+      document.querySelector("#btn-share-screen").toggleAttribute("disabled");
+      document.querySelector("#btn-end-connection").toggleAttribute("disabled");
     };
 
     peerConn.onnegotiationneeded = await negotationEvent;
     peerConn.onicecandidate = await icecandidateSend;
     peerConn.ondatachannel = await addDataChannel;
-    // peerConn.ontrack = addMediaTrack;
+    peerConn.ontrack = addMediaTrack;
   } catch (error) {
     alert("Error Occurred.");
     console.error(error);
@@ -206,36 +217,55 @@ const createAnswer = async (data) => {
       console.error("Offer not Found.");
       alert("Error Occurred.");
       return;
-    } else if (peerConn) {
-      console.error("RTCPeerConnection exists before answer generation.");
-      alert("Error Occurred.");
-      return;
     }
-    peerConn = new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: "stun:stun.stunprotocol.org",
+    if (peerConn) {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: {
+          facingMode: "user",
         },
-        {
-          urls: "stun:stun.l.google.com:19302",
-        },
-      ],
-    });
-    peerConn.onnegotiationneeded = await negotationEvent;
-    peerConn.onicecandidate = await icecandidateSend;
-    peerConn.ondatachannel = await addDataChannel;
-    // peerConn.ontrack = addMediaTrack;
+      });
+      document.querySelector("#videoArea").toggleAttribute("hidden");
+      document.querySelector("#videoArea").toggleAttribute("d-flex");
+      stream.getTracks().forEach((track) => peerConn.addTrack(track, stream));
+      document.querySelector("#myVideo").srcObject = stream;
+      const remoteSdp = new RTCSessionDescription(data.sdp);
+      await peerConn.setRemoteDescription(remoteSdp);
+      const answer = await peerConn.createAnswer();
+      console.log("Video Call Answer Created.");
+      await peerConn.setLocalDescription(answer);
+      sendSignal({
+        type: "answer",
+        roomId,
+        sdp: peerConn.localDescription,
+      });
+    } else {
+      peerConn = new RTCPeerConnection({
+        iceServers: [
+          {
+            urls: "stun:stun.stunprotocol.org",
+          },
+          {
+            urls: "stun:stun.l.google.com:19302",
+          },
+        ],
+      });
+      peerConn.onnegotiationneeded = await negotationEvent;
+      peerConn.onicecandidate = await icecandidateSend;
+      peerConn.ondatachannel = await addDataChannel;
+      peerConn.ontrack = addMediaTrack;
 
-    const remoteSdp = new RTCSessionDescription(data.sdp);
-    await peerConn.setRemoteDescription(remoteSdp);
-    const answer = peerConn.createAnswer();
-    console.log("Answer Created.");
-    await peerConn.setLocalDescription(answer);
-    sendSignal({
-      type: "answer",
-      roomId,
-      sdp: peerConn.localDescription,
-    });
+      const remoteSdp = new RTCSessionDescription(data.sdp);
+      await peerConn.setRemoteDescription(remoteSdp);
+      const answer = await peerConn.createAnswer();
+      console.log("Answer Created.");
+      await peerConn.setLocalDescription(answer);
+      sendSignal({
+        type: "answer",
+        roomId,
+        sdp: peerConn.localDescription,
+      });
+    }
   } catch (error) {
     alert("Error Occurred.");
     console.error(error);
@@ -282,3 +312,22 @@ socket.on("signal", (data) => {
       break;
   }
 });
+
+const startVideoCall = async () => {
+  console.log("Video Call Initiated!");
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: true,
+    video: {
+      facingMode: "user",
+    },
+  });
+  document.querySelector("#videoArea").toggleAttribute("hidden");
+  document.querySelector("#videoArea").toggleAttribute("d-flex");
+  if (!peerConn) {
+    alert("Error Occurred.");
+    console.error("RTCPeerConnection not Initialized!");
+    return;
+  }
+  stream.getTracks().forEach((track) => peerConn.addTrack(track, stream));
+  document.querySelector("#myVideo").srcObject = stream;
+};

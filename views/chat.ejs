@@ -51,9 +51,25 @@
         </div>
         <% }}) %>
       </div>
-      <div class="row mt-5 d-flex justify-content-center" id="videoArea">
-        <video id="myVideo" autoplay playsinline muted></video>
-        <video id="remoteVideo" autoplay playsinline muted></video>
+      <div
+        class="row mt-5 mx-auto justify-content-center"
+        id="videoArea"
+        hidden
+      >
+        <video
+          class="bg-primary mx-auto mb-3 mb-lg-0"
+          id="myVideo"
+          autoplay
+          playsinline
+          muted
+        ></video>
+        <video
+          class="bg-secondary mx-auto"
+          id="remoteVideo"
+          autoplay
+          playsinline
+          muted
+        ></video>
       </div>
       <div id="messageDialog" class="mx-auto row mt-5" hidden>
         <div class="col-md-6 col-xs-10 mx-auto">

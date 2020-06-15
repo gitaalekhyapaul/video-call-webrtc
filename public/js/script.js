@@ -196,8 +196,8 @@ const createOffer = async () => {
       console.log("Data Channel Opened!");
       dataChannel.send("Connection Established!");
       document.querySelector("#btn-start-video").toggleAttribute("disabled");
-      document.querySelector("#btn-share-screen").toggleAttribute("disabled");
       document.querySelector("#btn-end-connection").toggleAttribute("disabled");
+      document.querySelector("#btn-share-screen").toggleAttribute("disabled");
     };
 
     peerConn.onnegotiationneeded = await negotationEvent;
@@ -224,15 +224,16 @@ const createAnswer = async (data) => {
           facingMode: "user",
         },
       });
-      document.querySelector("#videoArea").toggleAttribute("hidden");
-      document.querySelector("#videoArea").toggleAttribute("d-flex");
+      document.querySelector("#videoArea").removeAttribute("hidden");
+      document.querySelector("#videoArea").classList.add("d-flex");
       stream.getTracks().forEach((track) => peerConn.addTrack(track, stream));
       document.querySelector("#myVideo").srcObject = stream;
       const remoteSdp = new RTCSessionDescription(data.sdp);
       await peerConn.setRemoteDescription(remoteSdp);
       const answer = await peerConn.createAnswer();
       console.log("Video Call Answer Created.");
-      document.querySelector("#btn-start-video").toggleAttribute("disabled");
+      document.querySelector("#btn-start-video").setAttribute("disabled", "");
+      document.querySelector("#btn-share-screen").removeAttribute("disabled");
       await peerConn.setLocalDescription(answer);
       sendSignal({
         type: "answer",
@@ -305,6 +306,10 @@ socket.on("signal", (data) => {
     case "new-ice-candidate":
       iceCandidateAccept(data);
       break;
+    case "hang-up":
+      console.log("Remote-side disconnected!");
+      endConnection("remote");
+      break;
 
     default:
       alert("Error Occurred.");
@@ -321,9 +326,10 @@ const startVideoCall = async () => {
       facingMode: "user",
     },
   });
-  document.querySelector("#videoArea").toggleAttribute("hidden");
-  document.querySelector("#videoArea").toggleAttribute("d-flex");
-  document.querySelector("#btn-start-video").toggleAttribute("disabled");
+  document.querySelector("#videoArea").removeAttribute("hidden");
+  document.querySelector("#videoArea").classList.add("d-flex");
+  // document.querySelector("#btn-start-video").setAttribute("disabled", "");
+  document.querySelector("#btn-share-screen").removeAttribute("disabled");
   if (!peerConn) {
     alert("Error Occurred.");
     console.error("RTCPeerConnection not Initialized!");
@@ -331,4 +337,56 @@ const startVideoCall = async () => {
   }
   stream.getTracks().forEach((track) => peerConn.addTrack(track, stream));
   document.querySelector("#myVideo").srcObject = stream;
+};
+
+const startScreenShare = async () => {
+  console.log("Screen Share Initiated!");
+  const stream = await navigator.mediaDevices.getDisplayMedia({
+    audio: true,
+    video: true,
+  });
+  // document.querySelector("#btn-start-video").setAttribute("disabled", "");
+  if (!peerConn) {
+    alert("Error Occurred.");
+    console.error("RTCPeerConnection not Initialized!");
+    return;
+  }
+
+  peerConn.getSenders().forEach((sender) => {
+    if (sender.track.kind === "video") {
+      sender.replaceTrack(stream.getTracks()[0]);
+    }
+  });
+  document.querySelector("#myVideo").srcObject = stream;
+};
+const endConnection = async (status) => {
+  await dataChannel.close();
+  dataChannel.onmessage = null;
+  dataChannel.onopen = null;
+  dataChannel = null;
+  await peerConn.close();
+  peerConn.onnegotiationneeded = null;
+  peerConn.onicecandidate = null;
+  peerConn.ondatachannel = null;
+  peerConn.ontrack = null;
+  peerConn = null;
+  if (document.querySelector("#myVideo").srcObject) {
+    document
+      .querySelector("#myVideo")
+      .srcObject.getTracks()
+      .forEach((track) => track.stop());
+  }
+  showClients();
+  document.querySelector("#videoArea").setAttribute("hidden", "");
+  document.querySelector("#videoArea").classList.remove("d-flex");
+  document.querySelector("#btn-start-video").setAttribute("disabled", "");
+  document.querySelector("#btn-end-connection").setAttribute("disabled", "");
+  document.querySelector("#btn-share-screen").removeAttribute("disabled");
+  if (status === "local") {
+    sendSignal({
+      type: "hang-up",
+      roomId,
+    });
+    console.log("Disconnection Initiated.");
+  }
 };

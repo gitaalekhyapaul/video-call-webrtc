@@ -135,7 +135,7 @@ const iceCandidateAccept = async (data) => {
     await peerConn.addIceCandidate(candidate);
     console.log("Added Remote ICE Candidate");
   } catch (error) {
-    alert("Error Occurred.");
+    // alert("Error Occurred.");
     console.error(error);
   }
 };

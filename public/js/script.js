@@ -104,7 +104,6 @@ const negotationEvent = async () => {
     });
     console.log("Offer sent.");
   } catch (error) {
-    alert("Error Occurred.");
     console.log(error);
   }
 };
@@ -233,6 +232,7 @@ const createAnswer = async (data) => {
       await peerConn.setRemoteDescription(remoteSdp);
       const answer = await peerConn.createAnswer();
       console.log("Video Call Answer Created.");
+      document.querySelector("#btn-start-video").toggleAttribute("disabled");
       await peerConn.setLocalDescription(answer);
       sendSignal({
         type: "answer",
@@ -323,6 +323,7 @@ const startVideoCall = async () => {
   });
   document.querySelector("#videoArea").toggleAttribute("hidden");
   document.querySelector("#videoArea").toggleAttribute("d-flex");
+  document.querySelector("#btn-start-video").toggleAttribute("disabled");
   if (!peerConn) {
     alert("Error Occurred.");
     console.error("RTCPeerConnection not Initialized!");

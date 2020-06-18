@@ -1,8 +1,8 @@
 const router = require("express").Router();
-const { getRoot, postLogin } = require("../controllers/chat");
+const { getClients, postLogin } = require("../controllers/chat");
 
-router.get("/", getRoot);
-router.post("/", postLogin);
+router.get("/clients", getClients);
+router.post("/login", postLogin);
 
 module.exports = {
   router,

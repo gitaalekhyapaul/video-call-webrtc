@@ -1,8 +1,12 @@
 const { readClients, writeClients } = require("../util/operations");
-const getRoot = (req, res, next) => {
+const { CustomError } = require("../helpers/errorHandler");
+
+const getClients = async (req, res, next) => {
   try {
-    res.render("login.ejs", {
-      error: req.query.error ? decodeURIComponent(req.query.error) : null,
+    const connectedClients = await readClients();
+    res.status(200).json({
+      status: "OK",
+      data: connectedClients,
     });
   } catch (error) {
     next(error);
@@ -12,18 +16,14 @@ const getRoot = (req, res, next) => {
 const postLogin = async (req, res, next) => {
   try {
     if (!req.body.username) {
-      return res.redirect(
-        `/?error=${encodeURIComponent("Invalid Request. Missing Parameters.")}`
-      );
+      return next(new CustomError(400, "Invalid Request. Missing Parameters!"));
     }
     const connectedClients = await readClients();
     const isThere = connectedClients.find(
       (ele) => ele.username === req.body.username
     );
     if (isThere) {
-      return res.redirect(
-        `/?error=${encodeURIComponent("Username already exists.")}`
-      );
+      return next(new CustomError(400, "Username already exists."));
     }
     const clients = connectedClients;
     clients.push({
@@ -32,18 +32,17 @@ const postLogin = async (req, res, next) => {
     });
     const result = await writeClients(clients);
     if (result) {
-      return res.render("chat.ejs", {
-        connected: connectedClients,
-        username: req.body.username,
+      res.status(201).json({
+        status: "OK",
       });
     }
   } catch (err) {
     console.log(err);
-    res.redirect(`/?error=${encodeURIComponent("Internal Server Error.")}`);
+    next(err);
   }
 };
 
 module.exports = {
-  getRoot,
+  getClients,
   postLogin,
 };

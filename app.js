@@ -19,7 +19,7 @@ const server = app.listen(process.env.PORT, (err) => {
 const io = require("./util/socket").initSocket(server);
 const { socketController, newSocket } = require("./controllers/socket");
 
-app.use(router);
+app.use("/api", router);
 app.use(errorHandler);
 io.on("connection", async (socket) => {
   await newSocket(socket);

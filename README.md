@@ -100,3 +100,19 @@
 - **"answer" => On pressing the video call / screen share button from one side, the other side is asked for consent, if agreed on, an answer SDP packet from the callee is sent to the video caller in the 'sdp' property of the Signal JSON. On each offer from the caller, a new answer is formed by the callee.**
 - **"new-ice-candidate" => This is a ICE Candidate of the opposite caller / callee. The candidate is found under the 'candidate' property of the Signal JSON. It is to be added to the RTCPeerConnection object.**
 - **"hang-up" => This is a signal initiated by either of the participants who click the hang up button. It is to notify the other user to hang up and close RTCDataChannel and RTCPeerConnection.**
+
+---
+
+# Client-Side Logic
+
+## In Reference to: [Mozilla Documentation for RTCPeerConnection](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling)
+
+## In Reference to: [Mozilla Documentation for RTCDataChannel](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Simple_RTCDataChannel_sample)
+
+## Video Calling Workflow (image from MDN):
+
+![Video Call Workflow](https://media.prod.mdn.mozit.cloud/attachments/2016/01/27/12363/9d667775214ae0422fae606050f60c1e/WebRTC%20-%20Signaling%20Diagram.svg)
+
+## ICE Candidate Exchange Flow (image from MDN):
+
+![ICE Candidate Exchange Workflow](https://media.prod.mdn.mozit.cloud/attachments/2016/01/27/12365/b5bcd9ecac08ae0bc89b6a3e08cfe93c/WebRTC%20-%20ICE%20Candidate%20Exchange.svg)

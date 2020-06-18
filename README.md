@@ -11,8 +11,14 @@
     |--|--|
     |_username_|String|
 
-    **Response Body:**  
-    `{"status": "OK" or "ERROR", "error": "<error message is any error>" }`
+    **Response Body:**
+
+    ```json
+    {
+        "status": "OK" or "ERROR",
+        "error": "<error message is any error>"
+    }
+    ```
 
     **Response Codes and Error / Success Messages**
     |Type|Code|Error Message
@@ -24,8 +30,21 @@
 
 2.  ### **/api/clients => GET Route**
 
-    **Response Body:**  
-    `{ "status": "OK" or "ERROR", "error": "<error message is any error>", "data": [ { "username": "<username>", "socketId": "<Socket.IO ID>" } , ...<Array of Connected Clients> ] }`
+    **Response Body:**
+
+    ```json
+    {
+    "status": "OK" or "ERROR",
+    "error": "<error message is any error>",
+    "data": [
+                {
+                "username": "<username>",
+                "socketId": "<Socket.IO ID>"
+                },
+            ...<Array of Connected Clients>
+            ]
+    }
+    ```
 
     **Response Codes and Error / Success Messages**
     |Type|Code|Error Message
@@ -46,14 +65,28 @@
 2.  ### **joinedRoom => Expects ( data, callback( connectionInfo ) )**
     **Purpose: This event is triggered by the callee on accepting the caller request for connection.**
 
-**"data" format::**  
-`{ "roomId": "<Signalling Room ID>", "callerId": "<Caller SocketIO ID>", "calleeId": "<The SocketIO ID of Callee>" }`
+**"data" format::**
+
+```json
+{
+  "roomId": "<Signalling Room ID>",
+  "callerId": "<Caller SocketIO ID>",
+  "calleeId": "<The SocketIO ID of Callee>"
+}
+```
 
 - **data** => Data containing the caller and callee SocketIO ID and the Signalling Room ID.
 - **callback( connectionInfo )** => Callback where the new successful connection Information is shared.
 
-**"connectionInfo" format::**  
-`{ "roomId": "<Signalling Room ID>", "callerId": "<Caller SocketIO ID>", "calleeId": "<The SocketIO ID of Callee>" }`
+**"connectionInfo" format::**
+
+```json
+{
+  "roomId": "<Signalling Room ID>",
+  "callerId": "<Caller SocketIO ID>",
+  "calleeId": "<The SocketIO ID of Callee>"
+}
+```
 
 3. ### **bye-bye => Expects ( socketId )**
    **Purpose: This event is triggered either when the client closes the window or tab, and his disconnection has to be updated on the server-side.**
@@ -63,8 +96,16 @@
 4. ### **signal => Expects ( signalData )**
    **Purpose: This is the signal which has to be relayed to the specified room by the server.**
 
-**"signalData" format::**  
-`{ "type": "<Signal Type>", "roomId": "<The room to which the server has to relay>", <Other Properties as applicable.> }`
+**"signalData" format::**
+
+```json
+
+    {
+        "type": "<Signal Type>",
+        "roomId": "<The room to which the server has to relay>",
+        <Other Properties as applicable.>
+    }
+```
 
 - **signalData** => A RTCPeerConnection or ICECandidate Signal. [More on Signals](#types-of-signals).
 
@@ -73,24 +114,46 @@
 1. ### **joinRoom => Gets ( data )**
    **Purpose: This event is sent to callee after the caller creates a room, on this event, the callee is asked if he wants to accept the incoming connection. On confirmation, he will emit the [joinedRoom](#joinedroom--expects--data-callback-connectioninfo--) event.**
 
-**"data" format::**  
-`{ "roomId": "<Signalling Room ID>", "callerId": "<Caller SocketIO ID>" }`
+**"data" format::**
+
+```json
+{
+  "roomId": "<Signalling Room ID>",
+  "callerId": "<Caller SocketIO ID>"
+}
+```
 
 - **data** => Data containing the caller SocketIO ID and the Signalling Room ID.
 
 2. ### **refresh-clients => Gets ( data )**
    **Purpose: This event is fired on each new connection, and should be used to real-time update the list of available clients.**
 
-**"data" format::**  
-`[ { "username": "<username>", "socketId": "<Socket.IO ID>" } , ...<Array of Connected Clients> ]`
+**"data" format::**
+
+```json
+    [
+        {
+            "username": "<username>",
+            "socketId": "<Socket.IO ID>"
+        },
+        ...<Array of Connected Clients>
+    ]
+```
 
 - **data** => Data containing all the online clients with their respective SocketIO IDs.
 
 3. ### **signal => Gets ( signalData )**
    **Purpose: This is the signal which has been relayed back from the server to the caller / callee.**
 
-**"signalData" format::**  
-`{ "type": "<Signal Type>", "roomId": "<The room from which the signal is coming>", <Other Properties as applicable.> }`
+**"signalData" format::**
+
+```json
+    {
+        "type": "<Signal Type>",
+        "roomId": "<The room from which the signal is coming>",
+        <Other Properties as applicable.>
+    }
+```
 
 - **signalData** => A RTCPeerConnection or ICECandidate Signal. [More on Signals](#types-of-signals).
 
@@ -116,3 +179,7 @@
 ## ICE Candidate Exchange Flow (image from MDN):
 
 ![ICE Candidate Exchange Workflow](https://media.prod.mdn.mozit.cloud/attachments/2016/01/27/12365/b5bcd9ecac08ae0bc89b6a3e08cfe93c/WebRTC%20-%20ICE%20Candidate%20Exchange.svg)
+
+```
+
+```

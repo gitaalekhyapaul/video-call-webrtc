@@ -10,6 +10,7 @@
     |Parameter Name|Type|
     |--|--|
     |_username_|String|
+
     **Response Body:**  
     `{"status": "OK" or "ERROR", "error": "<error message is any error>" }`
 
@@ -65,12 +66,12 @@
 **"signalData" format::**  
 `{ "type": "<Signal Type>", "roomId": "<The room to which the server has to relay>", <Other Properties as applicable.> }`
 
-- **signalData** => A RTCPeerConnection or ICECandidate Signal. [More on Signals]().
+- **signalData** => A RTCPeerConnection or ICECandidate Signal. [More on Signals](#types-of-signals).
 
 ## Clients <= gets from <= Server:
 
 1. ### **joinRoom => Gets ( data )**
-   **Purpose: This event is sent to callee after the caller creates a room, on this event, the callee is asked if he wants to accept the incoming connection. On confirmation, he will emit the [joinedRoom]() event.**
+   **Purpose: This event is sent to callee after the caller creates a room, on this event, the callee is asked if he wants to accept the incoming connection. On confirmation, he will emit the [joinedRoom](#joinedroom--expects--data-callback-connectioninfo--) event.**
 
 **"data" format::**  
 `{ "roomId": "<Signalling Room ID>", "callerId": "<Caller SocketIO ID>" }`
@@ -91,7 +92,7 @@
 **"signalData" format::**  
 `{ "type": "<Signal Type>", "roomId": "<The room from which the signal is coming>", <Other Properties as applicable.> }`
 
-- **signalData** => A RTCPeerConnection or ICECandidate Signal. [More on Signals]().
+- **signalData** => A RTCPeerConnection or ICECandidate Signal. [More on Signals](#types-of-signals).
 
 ## Types of signals:
 

@@ -183,3 +183,7 @@
 ## Signalling Room Creation Flowchart:
 
 ![ICE Candidate Exchange Workflow](/flowcharts/roomCreation.svg)
+
+## RTCPeerConnection Flowchart:
+
+![ICE Candidate Exchange Workflow](/flowcharts/RTCPeerConnection.svg)

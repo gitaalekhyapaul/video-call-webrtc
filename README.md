@@ -180,6 +180,6 @@
 
 ![ICE Candidate Exchange Workflow](https://media.prod.mdn.mozit.cloud/attachments/2016/01/27/12365/b5bcd9ecac08ae0bc89b6a3e08cfe93c/WebRTC%20-%20ICE%20Candidate%20Exchange.svg)
 
-```
+## Signalling Room Creation Flowchart:
 
-```
+![ICE Candidate Exchange Workflow](/flowcharts/roomCreation.svg)
